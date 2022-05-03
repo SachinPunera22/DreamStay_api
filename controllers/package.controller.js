@@ -1,4 +1,4 @@
-require("../models/Package.model");
+require("../models/package.model");
 var ObjectId = require("mongoose").Types.ObjectId;
 
 const mongoose = require("mongoose");
