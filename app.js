@@ -11,6 +11,7 @@ const cors = require("cors");
 const userRoute = require("./routes/user.routes");
 const packageRoute = require("./routes/package.routes");
 
+app.use(express.static(__dirname + "/dist"))
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
