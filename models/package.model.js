@@ -32,8 +32,8 @@ const packageSchema = new mongoose.Schema({
   imageCover: {
     type: String,
   },
-  packageDate: {
-    type: String,
+  nextDate: {
+    type: Date,
   },
   stateLocation: {
     type: String,

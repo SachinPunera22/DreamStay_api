@@ -51,12 +51,14 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   //3. If everything is ok send token to client
   const token = signToken(user._id);
+ 
 
   res.status(200).json({
-    id:User._id,
+
+     user,
     status: "success",
     token,
-  }).cookie("SESSIONID", token, {httpOnly:true, secure:true});
+  })
 });
 exports.protect = catchAsync(async (req, res, next) => {
   let token;

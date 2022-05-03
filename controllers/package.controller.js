@@ -17,7 +17,7 @@ exports.addPackage = (req, res) => {
   package.summary = req.body.summary;
   package.description = req.body.description;
   package.imageCover = req.body.imageCover;
-  package.packageDate = req.body.packageDate;
+  package.nextDate = req.body.nextDate;
   package.stateLocation = req.body.stateLocation;
   package.totalStops = req.body.totalStops;
   package.totalDays = req.body.totalDays;
