@@ -54,8 +54,7 @@ exports.login = catchAsync(async (req, res, next) => {
  
 
   res.status(200).json({
-
-     user,
+   user,
     status: "success",
     token,
   })
@@ -63,15 +62,13 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   // verify recieved token
-
-console.log(req.headers.authorization)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
-  console.log(token);
+  console.log("token"+token);
 
   if (!token) {
     return next(new AppError("You are not logged in", 400));
@@ -79,8 +76,9 @@ console.log(req.headers.authorization)
 
   //verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
+  console.log('decoded id'+ decoded.id);
   //check if user still exists
+
   const freshUser = await User.findById(decoded.id);
   if (!freshUser) {
     return next(new AppError("the user belongs to this jwt token is no longer exist", 401));
@@ -92,6 +90,7 @@ console.log(req.headers.authorization)
   }
 
   req.user=freshUser
+  console.log('freshUser:'+ req.user);
   next();
 });
 // exports.protect = ((req, res, next) => {
