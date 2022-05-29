@@ -1,25 +1,29 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
+  _id: mongoose.ObjectId,
   package: {
     type: mongoose.Schema.ObjectId,
     ref: "Package",
-    required: [true, "Booking must belong toaTour!"],
+    required: [true, "Booking must belong to a Tour!"],
   },
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
-    required: [true, "Booking must belong toaUser!"],
+    required: [true, "Booking must belong to a User!"],
   },
   price: {
     type: Number,
-    required: [true, "Booking must haveaprice."],
+    required: [true, "Booking must have a price."],
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
-
+  bookingName:{
+    type: String,
+    required: [true, "Booking must have a booking Name."],
+  },
   paid: {
     type: Boolean,
     default: true,

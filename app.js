@@ -10,7 +10,7 @@ const cors = require("cors");
 
 const userRoute = require("./routes/user.routes");
 const packageRoute = require("./routes/package.routes");
-const bookingRoute = require("./routes/bookingRoute");
+const bookingRoute = require("./routes/booking.routes");
 const bookingController= require("./controllers/bookingController")
 
 app.post("/webhook-checkout", bodyParser.raw(({type:"application/json"})),
