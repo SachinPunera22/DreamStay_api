@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  _id: mongoose.ObjectId,
+  
   package: {
     type: mongoose.Schema.ObjectId,
     ref: "Package",
