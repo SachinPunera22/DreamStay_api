@@ -7,7 +7,6 @@ const Package = require("../models/package.model");
 const Booking = require("../models/booking.model");
 const mongoose = require("mongoose");
 
-
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   if (!ObjectId.isValid(req.params.tourID)) {
     return res
@@ -20,10 +19,10 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 2)Create checkout session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    // success_url: `${req.protocol}://${req.get(
-    //   "host"
-    // )}/booking-status/${req.user._id}`,
-    success_url: `http://localhost:4200/booking-status/${req.user._id}`,
+    success_url: `${req.protocol}://${req.get(
+      "host"
+    )}/booking-status/${req.user._id}`,
+    // success_url: `http://localhost:4200/booking-status/${req.user._id}`,
 
     cancel_url: `${req.protocol}://${req.get("host")}/`,
     customer_email: req.user.email,
@@ -50,9 +49,9 @@ const createBookingCheckout = async (session) => {
   const package = session.client_reference_id;
   const user = (await User.findOne({ email: session.customer_email })).id;
   const price = session.amount_total / 100;
-  const bookingName= session.customer_details.name;
+  const bookingName = session.customer_details.name;
 
-  console.log(' ********* bookingName***********:'+  bookingName);
+  console.log(" ********* bookingName***********:" + bookingName);
   await Booking.create({ package, user, price, bookingName });
 };
 
@@ -81,40 +80,25 @@ exports.webhookCheckout = (req, res, next) => {
   }
 };
 
-exports.getUserBooking =(req, res, next) => {
-  // const bookingId = req.params.userId;
+exports.getUserBooking = async (req, res, next) => {
+  const userId = req.params.userId;
 
-  //find the booking
- 
-    // const bookingId = (
-    //   await Booking.findOne({ user: userId }, {}, { sort: { createdAt: -1 } })
-    // ).id;
-    
-    //  Booking.findById(bookingId, (err, docs) => {
-    //   if (!err) {
-    //     console.log('hello');
-    //     res.status(200).send(docs);
-    //   } else {
-    //     console.log('no hello');
-    //     console.log("Error" + JSON.stringify(err, undefined, 2));
-    //   }
-    // });
+  // find the booking of the user
 
-    if (!ObjectId.isValid(req.params.userId)) {
-      return res
-        .status(400)
-        .send(`Users details is not present ${req.params.id}`);
-    }
-  
-    const bookingId = new mongoose.Types.ObjectId(req.params.userId);
-    console.log('id:'+ bookingId);
-    Booking.findOne({_id:bookingId}, (err, docs) => {
-      if (!err) {
-        res.send(docs);
-      } else {
-        console.log("Error" + JSON.stringify(err, undefined, 2));
-      }
-    });
-   
-  
+  const getBooking = await Booking.findOne({ user: userId })
+    .sort({ field: "asc", _id: -1 })
+    .limit(1);
+  //find the user data
+  const getUser = await User.findById( getBooking.user );
+  //find the package
+
+  const getPackage = await Package.findById( getBooking.package );
+  const data={
+    booking:getBooking,
+    user:getUser,
+    package:getPackage
+  }
+  res.status(200).send({
+    data
+  });
 };
