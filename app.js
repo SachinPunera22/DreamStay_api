@@ -13,10 +13,11 @@ const packageRoute = require("./routes/package.routes");
 const bookingRoute = require("./routes/booking.routes");
 const bookingController= require("./controllers/bookingController")
 
+app.use(express.static(__dirname + "/dist"))
 app.post("/webhook-checkout", bodyParser.raw(({type:"application/json"})),
 bookingController.webhookCheckout)
 
-app.use(express.static(__dirname + "/dist"))
+
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({

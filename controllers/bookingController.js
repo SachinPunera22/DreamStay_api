@@ -19,11 +19,12 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 2)Create checkout session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    success_url: `${req.protocol}://${req.get("host")}/booking-status/${req.user._id}`,
+    success_url: `${req.protocol}://${req.get("host")}`,
     // success_url: `http://localhost:4200/booking-status/${req.user._id}`,
 
     cancel_url: `${req.protocol}://${req.get("host")}/`,
     customer_email: req.user.email,
+    
     client_reference_id: req.params.tourID,
     line_items: [
       {
@@ -81,22 +82,23 @@ exports.webhookCheckout = (req, res, next) => {
 exports.getUserBooking = async (req, res, next) => {
   const userId = req.params.userId;
 
-  // find the booking of the user
-
-  const getBooking = await Booking.findOne({ user: userId })
-    .sort({ field: "asc", _id: -1 })
-    .limit(1);
-  //find the user data
-  const getUser = await User.findById( getBooking.user );
-  //find the package
-
-  const getPackage = await Package.findById( getBooking.package );
-  const data={
-    booking:getBooking,
-    user:getUser,
-    package:getPackage
+  // chceck the user Id
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).send(`User Id is not correct ${userId}`);
   }
-  res.status(200).send({
-    data
-  });
+  // find the booking list of the user
+
+  const getBooking = await Booking.find({ user: userId })
+    .populate("user package")
+    .sort({ createdAt: -1 });
+
+  console.log("getbooking:" + getBooking);
+  if (getBooking.length === 0) {
+    res.status(401).send(`No bookings Found ${userId}`);
+
+  } else {
+    res.status(200).send({
+      booking: getBooking,
+    });
+  }
 };
